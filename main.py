@@ -33,15 +33,37 @@ Example:
 """
 
 def longest_path(graph: list) -> int:
-    # Your implementation goes here
-    pass
+    topo_order = topological_sort(graph)
+    return calculate_longest_path(graph, topo_order)
 
 # Helper function to perform topological sort
 def topological_sort(graph):
-    # Your implementation goes here
-    pass
+    visited = [False] * len(graph)
+    stack = []
+    
+    def dfs(node):
+        visited[node] = True
+        for neighbor, _ in graph[node]:
+            if not visited[neighbor]:
+                dfs(neighbor)
+        stack.append(node)
+    
+    for node in range(len(graph)):
+        if not visited[node]:
+            dfs(node)
+    
+    return stack[::-1]  # return in reverse order of finishing times
 
 # Function to calculate longest path using topological sort
 def calculate_longest_path(graph, topo_order):
-    # Your implementation goes here
-    pass
+    distances = [-float('inf')] * len(graph)
+    for node in topo_order:
+        if distances[node] == -float('inf'):  # if not updated, it's a starting node
+            distances[node] = 0
+        for neighbor, weight in graph[node]:
+            if distances[neighbor] < distances[node] + weight:
+                distances[neighbor] = distances[node] + weight
+    
+    return max(distances)
+
+
